@@ -44,9 +44,7 @@ uint8_t tripleclick = 12;
 uint8_t softerclick = 20;
 uint8_t sftdblclick = 32;
 
-String receivedChar;
-
-int  tdelay;
+int receivedChar;
 
 boolean newData = false;
 boolean prompthold = false;
@@ -113,9 +111,9 @@ void tcainit()
 void setup()
 {
   Serial.begin(115200);
-  Serial.println("Haptic Sketch 01");
+  Serial.println("Haptic Sketch 01 ");
   Serial.println("by: TU Delft Pi-Touch Group");
-  Serial.println("Version No: 0.2");
+  Serial.println("Version No: 0.4");
   Serial.println("Board Required: Arduino Uno");
 
   // Configuration for the TCA9548 I2C Expander RESET Pin
@@ -169,62 +167,40 @@ void drvinit()
   drv3.setMode(DRV2605_MODE_INTTRIG);
 
 }
-/**************************************************************************/
-void srl_prompt() {
-  
-  while (Serial.available() > 0) {
-    int inChar = Serial.read();
-    
-    // convert the incoming byte to a char and add it to the string:
-    if (isDigit(inChar)) {
-      receivedChar += (char)inChar;
-    }
-    
-    // if you get a newline, print the string, then the string's value:
-    if (inChar == '\n') {
-      Serial.print("Value:");
-      Serial.println(receivedChar.toInt());
-      Serial.print("String: ");
-      Serial.println(receivedChar);
-      // clear the string for new input:
-      receivedChar = "";
-    }
-    
-    newData = true;
-  }
-}
+
   /**************************************************************************/
   void effecttest()
   {
     tcaselect(0); //Select desired multiplexer port
     drv0.useLRA();
-    Serial.println("Effect StrongClick");
+    Serial.println("Driver 1`Test");
+    delay(100);
     drv0.setWaveform(0, strongclick); ;
     drv0.setWaveform(1, 0);
     drv0.go();
 
-    delay(1000);
+    delay(700);
     tcaselect(1); //Select desired multiplexer port
-    Serial.println("Effect Triple Click");
     drv1.useLRA();
-    drv1.setWaveform(0, tripleclick);
+    Serial.println("Driver 2`Test");
+    drv1.setWaveform(0, strongclick); ;
     drv1.setWaveform(1, 0);
     drv1.go();
 
-    delay(1000);
+    delay(700);
     tcaselect(2); //Select desired multiplexer port
-    Serial.println("Effect Double Click");
     drv2.useLRA();
-    drv2.setWaveform(0, doubleclick);
-    drv2.setWaveform(5, 0);
-    drv2.go();;
+    Serial.println("Driver 3`Test");
+    drv2.setWaveform(0, strongclick); ;
+    drv2.setWaveform(1, 0);
+    drv0.go();
 
-    delay(1000);
+    delay(700);
     tcaselect(3); //Select desired multiplexer port
-    Serial.println("Effect Soft Double Click");
     drv3.useLRA();
-    drv3.setWaveform(0, sftdblclick);
-    drv3.setWaveform(5, 0);
+    Serial.println("Driver 4`Test");
+    drv3.setWaveform(0, strongclick); ;
+    drv3.setWaveform(1, 0);
     drv3.go();
     ;
     Serial.println("Effect Test Complete");
@@ -236,14 +212,54 @@ void srl_prompt() {
 
   void loop(){
     while (prompthold == false) {
-      prompthold = true;
+      prompthold = true; 
 
-      Serial.println("Please enter delay");
-
+      Serial.println("Please enter delay in ms");
+      receivedChar = "";
       srl_prompt();
+      Serial.println("Debug 1");
+      apparentmotion();
+      Serial.println("Debug 2");
     }
     
-    delay(10000);
-    prompthold = false;
-
   }
+
+  /**************************************************************************/
+  void apparentmotion(){
+    int  tdelay;
+    
+    tdelay = receivedChar;
+    Serial.print("tDelay: ");
+    Serial.println(tdelay);
+    
+    tcaselect(0); //Select desired multiplexer port
+      drv0.useLRA();    
+      drv0.setWaveform(0, strongclick); ;
+      drv0.setWaveform(1, 0);
+      drv0.go();
+
+    delay(tdelay);
+    
+    tcaselect(1); //Select desired multiplexer port
+      drv1.useLRA();
+      drv1.setWaveform(0, strongclick); ;
+      drv1.setWaveform(1, 0);
+      drv1.go();
+    
+    delay(1000);
+    prompthold = false;
+  }
+  /**************************************************************************/
+void srl_prompt() {
+  while (!Serial.available()) {       //this holds until we see a serial prompt
+    } 
+  
+  if (Serial.available() > 0) {
+    int inChar = Serial.parseInt();
+    newData = true;
+    Serial.print("inChar: ");
+    Serial.println(inChar);
+    receivedChar = inChar;
+         
+  }
+}
