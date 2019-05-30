@@ -211,17 +211,13 @@ void drvinit()
   /**************************************************************************/
 
   void loop(){
-    while (prompthold == false) {
-      prompthold = true; 
-
       Serial.println("Please enter delay in ms");
-      receivedChar = "";
+      
       srl_prompt();
-      Serial.println("Debug 1");
+        Serial.flush();
+      
       apparentmotion();
-      Serial.println("Debug 2");
-    }
-    
+        Serial.flush();
   }
 
   /**************************************************************************/
@@ -229,7 +225,7 @@ void drvinit()
     int  tdelay;
     
     tdelay = receivedChar;
-    Serial.print("tDelay: ");
+    Serial.print("Delay in ms: ");
     Serial.println(tdelay);
     
     tcaselect(0); //Select desired multiplexer port
@@ -245,9 +241,7 @@ void drvinit()
       drv1.setWaveform(0, strongclick); ;
       drv1.setWaveform(1, 0);
       drv1.go();
-    
-    delay(1000);
-    prompthold = false;
+
   }
   /**************************************************************************/
 void srl_prompt() {
@@ -257,9 +251,8 @@ void srl_prompt() {
   if (Serial.available() > 0) {
     int inChar = Serial.parseInt();
     newData = true;
-    Serial.print("inChar: ");
-    Serial.println(inChar);
     receivedChar = inChar;
-         
+    
+    inChar = Serial.parseInt();     
   }
 }
