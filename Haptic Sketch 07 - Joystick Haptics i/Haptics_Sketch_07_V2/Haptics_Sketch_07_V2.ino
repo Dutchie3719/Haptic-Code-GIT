@@ -86,13 +86,15 @@ void datamath(){
   a = adjx * adjx;
   b = adjy * adjy;
   c = sqrt(a+b);
-  Serial.println(c);
+  //Serial.println(c);
 
   if (c >= 51){
     c = 51;
   }
 
   duration = c*(5);
+  
+  Serial.print("PWM Value:");
   Serial.println(duration);
 
 //  
@@ -123,5 +125,13 @@ void loop()
 { 
   datacall();
   datamath();
-  delay(500);
+  pwmplay();
+  delay(2);
 } 
+
+void pwmplay()
+{
+  int pwmval = round(duration);
+  analogWrite(3,pwmval);
+
+}
