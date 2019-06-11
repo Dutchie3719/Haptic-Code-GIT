@@ -113,9 +113,9 @@ void tcainit()
 void setup()
 {
   Serial.begin(115200);
-  Serial.println("Haptic Sketch 01 ");
+  Serial.println("Haptic Sketch 02 Zonal Haptics ");
   Serial.println("by: TU Delft Pi-Touch Group");
-  Serial.println("Version No: 0.4");
+  Serial.println("Version No: 0.1");
   Serial.println("Board Required: Arduino Uno");
 
   // Configuration for the TCA9548 I2C Expander RESET Pin
@@ -213,36 +213,27 @@ void drvinit()
   /**************************************************************************/
 
   void loop(){
-      Serial.println("Please enter delay in ms");
+      Serial.println("Please select waveform");
       
       srl_prompt();
         Serial.flush();
         
       waveform = strongclick;      
-      apparentmotion();
+      paneliso();
       Serial.flush();
 
-      delay(1000);
-      
-      waveform = doubleclick;      
-      apparentmotion();
-      Serial.flush();
-
-      delay(1000);
-
-      waveform = tripleclick;      
-      apparentmotion();
-      Serial.flush();
 
   }
 
   /**************************************************************************/
-  void apparentmotion(){
-    int  tdelay;
+  void paneliso(){
     
-    tdelay = receivedChar;
-    Serial.print("Delay in ms: ");
-    Serial.println(tdelay);
+    waveform = receivedChar;
+    if (waveform > 117){
+      waveform = 1;
+    }
+    Serial.print("You Selected Waveform No: ");
+    Serial.println(waveform);
     
     tcaselect(0); //Select desired multiplexer port
       drv0.useLRA();    
@@ -250,29 +241,14 @@ void drvinit()
       drv0.setWaveform(1, 0);
       drv0.go();
 
-    delay(tdelay);
-    
-    tcaselect(2); //Select desired multiplexer port
-      drv1.useLRA();
-      drv1.setWaveform(0, waveform); ;
-      drv1.setWaveform(1, 0);
-      drv1.go();
-
     delay(1000);
-
-    tcaselect(2); //Select desired multiplexer port
+    
+    tcaselect(1); //Select desired multiplexer port
       drv1.useLRA();
       drv1.setWaveform(0, waveform); ;
       drv1.setWaveform(1, 0);
       drv1.go();
 
-    delay(tdelay);
-        
-      tcaselect(0); //Select desired multiplexer port
-      drv0.useLRA();    
-      drv0.setWaveform(0, waveform); ;
-      drv0.setWaveform(1, 0);
-      drv0.go();
   }
   /**************************************************************************/
 void srl_prompt() {

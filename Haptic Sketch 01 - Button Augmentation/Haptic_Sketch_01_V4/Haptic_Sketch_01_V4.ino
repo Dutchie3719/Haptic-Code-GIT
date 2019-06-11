@@ -252,7 +252,7 @@ void drvinit()
 
     delay(tdelay);
     
-    tcaselect(2); //Select desired multiplexer port
+    tcaselect(1); //Select desired multiplexer port
       drv1.useLRA();
       drv1.setWaveform(0, waveform); ;
       drv1.setWaveform(1, 0);
@@ -260,7 +260,7 @@ void drvinit()
 
     delay(1000);
 
-    tcaselect(2); //Select desired multiplexer port
+    tcaselect(1); //Select desired multiplexer port
       drv1.useLRA();
       drv1.setWaveform(0, waveform); ;
       drv1.setWaveform(1, 0);
